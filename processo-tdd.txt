@@ -1,0 +1,4 @@
+A figura mostra que o processo de escrever testes funcionais e de unidade podem ser feitos paralelamente.
+Escrevemos os dois tipos de teste, rodamos o funcional e verificamos se ele falha. Então, rodamos o unitário e verificamos se ele falha.
+Caso falhe, modificamos o código a ser testado e rodamos o teste novamente. Isso é repetido até o teste passar.
+Caso o código precise ser refatorado, rodamos os testes de novo para garantir que ele não afetou o funcionamento do sistema.
