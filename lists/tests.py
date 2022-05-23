@@ -1,20 +1,16 @@
+from django.urls import resolve
+from django.test import TestCase
+from django.http import HttpRequest
 from django.test import TestCase
 from lists.models import Item, List
+
+from lists.views import home_page
 
 class HomePageTest(TestCase):
 
     def test_uses_home_template(self):
         response = self.client.get('/')
         self.assertTemplateUsed(response, 'home.html')
-
-    def test_displays_all_list_items(self):
-        Item.objects.create(text='itemey 1')
-        Item.objects.create(text='itemey 2')
-
-        response = self.client.get('/')
-
-        self.assertIn('itemey 1', response.content.decode())
-        self.assertIn('itemey 2', response.content.decode())
 
 
 class ListAndItemModelsTest(TestCase):
@@ -75,6 +71,12 @@ class ListViewTest(TestCase):
         self.assertNotContains(response, 'other list item 1')
         self.assertNotContains(response, 'other list item 2')
 
+    def test_passes_correct_list_to_template(self):
+        other_list = List.objects.create()
+        correct_list = List.objects.create()
+        response = self.client.get(f'/lists/{correct_list.id}/')
+        self.assertEqual(response.context['list'], correct_list)
+
 
 class NewListTest(TestCase):
 
@@ -84,7 +86,7 @@ class NewListTest(TestCase):
         new_item = Item.objects.first()
         self.assertEqual(new_item.text, 'A new list item')
 
-def test_redirects_after_POST(self):
+    def test_redirects_after_POST(self):
         response = self.client.post('/lists/new', data={'item_text': 'A new list item'})
         new_list = List.objects.first()
         self.assertRedirects(response, f'/lists/{new_list.id}/')
@@ -117,3 +119,4 @@ class NewItemTest(TestCase):
         )
 
         self.assertRedirects(response, f'/lists/{correct_list.id}/')
+    
